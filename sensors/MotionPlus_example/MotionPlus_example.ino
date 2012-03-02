@@ -1,9 +1,14 @@
 /**
+ * \file MotionPlus_example.ino
  * \author Joakim Gebart <joakim.gebart@jge.se>
  * \date 1 March 2012
  *
- * \brief Example connecting Arduino to Wii for use as an IMU.
+ * \brief Usage example for connecting Arduino to a Wii MotionPlus for use as an IMU.
  *
+ * \section License
+ * The author has placed this work in the Public Domain, thereby relinquishing
+ * all copyrights. Everyone is free to use, modify, republish, sell or give away
+ * this work without prior consent from anybody.
  */
 
 #include <Wire.h>

@@ -1,18 +1,38 @@
 #include "Wii.h"
 /**
  * \file Wii.cpp
+ * \author Copyright (C) 2012 Joakim Gebart <joakim.gebart@jge.se>
  *
- * \author Joakim Gebart <joakim.gebart@jge.se>
- * \date 1 March 2012
+ * Arduino Sensors library - provides a unified interface towards sensors.
+ *
+ * \section License
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file Wii.cpp
+ * \section Description
  *
  * \brief Arduino library for interfacing with Wii MotionPlus.
  *
  * Wii MotionPlus and Nunchuk combined into a 6DOF IMU connected to an Arduino
  * for passing on to a PC through the Arduino's USB serial port.
  *
- * Some of the initialization code is based on code found on the Arduino forums
- *
- * 31 october 2010 - First version
+ * \section History
+ * \date 1 March 2012 - Rewrote from scratch and made a separate library.
+ * \date 30 october 2010 - First version
  */
 
 //~ #define ENABLE_DEBUG 1
