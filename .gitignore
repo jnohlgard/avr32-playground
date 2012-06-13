@@ -1,0 +1,84 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# OSX noise
+.DS_Store
+
+# Windows noise
+Thumbs.db
+thumbs.db
+
+# GNU autoconf
+aclocal.m4
+autom4te.cache
+configure
+config.guess
+config.log
+config.status
+install-sh
+missing
+depcomp
+.deps
+.dirstamp
+
+# Backup files
+*~
+*.bak
+
+# Temporary scons-files
+.sconsign.dblite
+
+# LaTeX ignores (https://raw.github.com/gist/149016/e056704ebab0fbcd7bf937169b4057d378d09cf8/.gitignore)
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+*.toc
+*.ps
+
+# Python bytecode
+*.pyc
+*.pyo
+
+# Other VCSes
+.hg
+.svn
+.hgignore
+
+# gcc profiling data log
+gmon.out
+
+# CMake build directory
+build/
+
+# Octave crash dumps
+octave-core
