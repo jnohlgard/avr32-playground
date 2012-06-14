@@ -6,11 +6,11 @@
 #include "utility3d.hpp"
 #include "Render.hpp"
 #include <cmath>
-#include "init.h"
+#include "board.h"
 #include "millis.h"
 #include "Framebuffer/fonts/tom_thumb.h"
 #include <stdio.h>
-#include "cycle_counter.h"
+#include <drivers/cpu/cycle_counter/cycle_counter.h>
 #include <services/clock/sysclk.h>
 
 extern "C" {

@@ -1,4 +1,6 @@
 SET(ASF_PATH /home/kim/src/asf-3.2.0/)
+SET(ASF_PLATFORM avr32)
+SET(ASF_CPU uc3b0_b1)
 SET(CMAKE_SYSTEM_NAME Generic)
 SET(CMAKE_C_COMPILER avr32-elf-gcc)
 SET(CMAKE_CXX_COMPILER avr32-elf-g++)
@@ -7,12 +9,12 @@ SET(SIZE avr32-elf-size)
 SET(DFUPROGRAM dfu-programmer)
 SET(DFUPART at32uc3b0256)
 SET(AVR32_LINKER_SCRIPT "${ASF_PATH}/avr32/utils/linker_scripts/at32uc3b/0256/gcc/link_uc3b0256.lds")
+SET(AVR32_TRAMPOLINE "${ASF_PATH}/avr32/utils/startup/trampoline_uc3.S")
 
 # For other boards, create a new directory under hardware/ and create a user_board.h, init.h and init.c there.
 SET(AVR32_USER_BOARD chiplab7)
 get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component(AVR32_USER_BOARD_DIR "${SELF_DIR}/../hardware/${AVR32_USER_BOARD}" ABSOLUTE)
-
 
 SET(CSTANDARD "-std=gnu99")
 SET(CXXSTANDARD "-std=c++0x")

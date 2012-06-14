@@ -1,23 +1,5 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/config)
-include_directories(${ASF_PATH}/avr32)
-include_directories(${ASF_PATH}/common)
-include_directories(${ASF_PATH}/avr32/boards)
-include_directories(${ASF_PATH}/common/boards)
-include_directories(${ASF_PATH}/avr32/utils)
-include_directories(${ASF_PATH}/common/utils)
-include_directories(${ASF_PATH}/common/services/clock)
-include_directories(${ASF_PATH}/avr32/utils/preprocessor)
-include_directories(${ASF_PATH}/avr32/drivers/gpio)
-include_directories(${ASF_PATH}/avr32/drivers/intc)
-include_directories(${ASF_PATH}/avr32/drivers/spi)
-include_directories(${ASF_PATH}/avr32/drivers/flashc)
-include_directories(${ASF_PATH}/avr32/drivers/cpu/cycle_counter)
-#~ include_directories(${ASF_PATH}/boards)
-#~ include_directories(${ASF_PATH}/utils)
-#~ include_directories(${ASF_PATH}/utils/preprocessor)
-#~ include_directories(${ASF_PATH}/drivers/gpio)
-#~ include_directories(${ASF_PATH}/drivers/intc)
+include_directories(${CMAKE_SOURCE_DIR}/config)
 
 add_executable(cube.elf
     ../../Framebuffer/Framebuffer.cpp
@@ -27,14 +9,8 @@ add_executable(cube.elf
     cube.cpp
     ${AVR32_USER_BOARD_DIR}/init.c
     millis.c
-    ${ASF_PATH}/common/services/clock/uc3b0_b1/sysclk.c
-    ${ASF_PATH}/avr32/drivers/gpio/gpio.c
-    ${ASF_PATH}/avr32/drivers/intc/intc.c
-    ${ASF_PATH}/avr32/drivers/spi/spi.c
-    ${ASF_PATH}/avr32/drivers/pm/pm.c
-    ${ASF_PATH}/avr32/drivers/flashc/flashc.c
-    #~ software_framework/boards/EVK1101/led.c
-    ${ASF_PATH}/avr32/utils/startup/trampoline_uc3.S
+    ${ASF_SOURCE_FILES}
+    ${AVR32_TRAMPOLINE}
 )
 
 set(DFUHEXFILE cube.hex)
