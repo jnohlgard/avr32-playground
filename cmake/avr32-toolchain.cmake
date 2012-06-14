@@ -8,6 +8,11 @@ SET(DFUPROGRAM dfu-programmer)
 SET(DFUPART at32uc3b0256)
 SET(AVR32_LINKER_SCRIPT "${ASF_PATH}/avr32/utils/linker_scripts/at32uc3b/0256/gcc/link_uc3b0256.lds")
 
+# For other boards, create a new directory under hardware/ and create a user_board.h, init.h and init.c there.
+SET(AVR32_USER_BOARD chiplab7)
+get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(AVR32_USER_BOARD_DIR "${SELF_DIR}/../hardware/${AVR32_USER_BOARD}" ABSOLUTE)
+
 
 SET(CSTANDARD "-std=gnu99")
 SET(CXXSTANDARD "-std=c++0x")
@@ -19,7 +24,7 @@ SET(CTUNING "-ffunction-sections -fdata-sections")
 SET(COPT "-O1")
 #~ SET(COPT "-O1 -falign-functions -falign-jumps -falign-labels -fcaller-saves -fcrossjumping -fcse-follow-jumps -fdelete-null-pointer-checks -fexpensive-optimizations -fforward-propagate -fgcse -finline-functions -finline-small-functions -fipa-cp -foptimize-register-move -foptimize-sibling-calls -fpeephole2 -fregmove -freorder-blocks -freorder-functions -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -fstrict-aliasing -fthread-jumps -ftree-builtin-call-dce -ftree-pre -ftree-vrp")
 SET(CMPART "-mpart=uc3b0256")
-SET(CDEFS "-DBOARD=EVK1101")
+SET(CDEFS "-DBOARD=USER_BOARD")
 #~ SET(CDEFS "-DF_CPU=16000000")
 
 

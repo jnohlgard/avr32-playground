@@ -1,0 +1,14 @@
+This directory contains board support functions and definitions for the AVR32B0-EK by chiplab7.
+
+I found this really cool AVR32 board on TaoBao. It is designed by a chinese company
+called chiplab7, most information about the board is in chinese or Google-
+translated chinglish. From what I read on the net it seems to be similar to
+Atmel's EVK1101 in some aspects but this board has a 128x64 pixel OLED display
+connected to the SPI on the UC3. It is also equipped with an microSD-slot and a
+WM8978 stereo audio codec including two 3.5mm sockets and an onboard speaker.
+In addition it has a 5-directional joystick and a light sensor.
+Unfortunately it seems impossible to buy these boards any more, chiplab7 has
+removed it from their website and taobao site and replaced it with an inferior
+ARM-powered thing.
+
+Correction: it is available here: http://chiplab7.com/goods.php?id=2
