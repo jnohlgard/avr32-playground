@@ -9,7 +9,8 @@
 #include "board.h"
 #include "millis.h"
 #include "Framebuffer/fonts/tom_thumb.h"
-#include <stdio.h>
+#include <cstdio>
+#include <cstring>
 #include <drivers/cpu/cycle_counter/cycle_counter.h>
 #include <services/clock/sysclk.h>
 
@@ -247,6 +248,7 @@ void loop(void)
     }
 
     char fps_str[30];
+    memset(fps_str, '\0', sizeof(fps_str));
     sprintf(fps_str, "fps: %4.3f", fps);
     char test_str[] = "Hej detta är ett\ntest åäö hopp";
     fb.text(0, 0, sizeof(fps_str), fps_str, 255, Fonts::font3x5, false);
@@ -254,6 +256,7 @@ void loop(void)
     long n = Get_sys_count();
     fb.flush();
     n = cpu_cy_2_us(Get_sys_count() - n, 60000000);
+    memset(fps_str, '\0', sizeof(fps_str));
     sprintf(fps_str, "Flush: %9ld us", n);
     fb.text(0, 6, sizeof(fps_str), fps_str, 255, Fonts::font3x5, false);
     fb.flush();
