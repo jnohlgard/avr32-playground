@@ -15,14 +15,14 @@
 
 #define F_CPU       (FCPU_HZ)
 
-
+// See common/services/clock/$ASF_CPU/sysclk.h for a list of the bitmasks used here.
 //#define CONFIG_SYSCLK_INIT_CPUMASK  (1 << SYSCLK_SYSTIMER)
-//#define CONFIG_SYSCLK_INIT_PBAMASK  (1 << SYSCLK_USART0)
+#define CONFIG_SYSCLK_INIT_PBAMASK    (1 << SYSCLK_SPI)
 //#define CONFIG_SYSCLK_INIT_PBBMASK  (1 << SYSCLK_HMATRIX)
 //#define CONFIG_SYSCLK_INIT_HSBMASK  (1 << SYSCLK_MDMA_HSB)
 // Disable all non-essential peripheral clocks
 #define CONFIG_SYSCLK_INIT_CPUMASK  0
-#define CONFIG_SYSCLK_INIT_PBAMASK  0
+//~ #define CONFIG_SYSCLK_INIT_PBAMASK  0
 #define CONFIG_SYSCLK_INIT_PBBMASK  0
 #define CONFIG_SYSCLK_INIT_HSBMASK  0
 
