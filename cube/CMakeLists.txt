@@ -10,7 +10,13 @@ include_directories(${AVR32_USER_BOARD_DIR})
 
 set(ASF_PLATFORM avr32)
 set(ASF_CPU uc3b0_b1)
-set(ASF_DRIVERS gpio intc spi flashc cycle_counter)
+set(ASF_DRIVERS
+    gpio
+    intc
+    spi
+    flashc
+    cycle_counter
+    )
 set(ASF_SERVICES sysclk)
 include(atmel-software-framework)
 include_directories(${ASF_INCLUDE_DIRS})
