@@ -1,5 +1,5 @@
-#include "init.h"
 #include "board.h"
+#include "conf_board.h"
 #include <drivers/gpio/gpio.h>
 
 void board_init(void)
@@ -40,6 +40,20 @@ void board_init(void)
 	// Assign I/Os to SPI.
 	gpio_enable_module(SD_MMC_SPI_GPIO_MAP,
 			sizeof(SD_MMC_SPI_GPIO_MAP) / sizeof(SD_MMC_SPI_GPIO_MAP[0]));
+#endif
+
+#if defined (CONF_BOARD_OLED_SPI)
+    // GPIO pins used for OLED interface
+    static const gpio_map_t SPI_GPIO_MAP =
+    {
+        {SSD1306_SPI_SCK_PIN,  SSD1306_SPI_SCK_FUNCTION },  // SPI Clock.
+        {SSD1306_SPI_MISO_PIN, SSD1306_SPI_MISO_FUNCTION},  // MISO.
+        {SSD1306_SPI_MOSI_PIN, SSD1306_SPI_MOSI_FUNCTION},  // MOSI.
+        {SSD1306_SPI_NPCS_PIN, SSD1306_SPI_NPCS_FUNCTION}   // Chip Select NPCS.
+    };
+    // Assign I/Os to SPI.
+    gpio_enable_module(SPI_GPIO_MAP,
+                       sizeof(SPI_GPIO_MAP) / sizeof(SPI_GPIO_MAP[0]));
 #endif
 
 #if defined (CONF_BOARD_TWI)

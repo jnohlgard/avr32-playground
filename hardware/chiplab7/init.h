@@ -3,7 +3,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-void hwinit(void);
 #ifdef __cplusplus
 }
 #endif
