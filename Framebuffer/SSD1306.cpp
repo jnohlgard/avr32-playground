@@ -1,4 +1,6 @@
 #include "SSD1306.hpp"
+#include "board.h"
+#include "conf_clock.h"
 
 SSD1306Framebuffer::SSD1306Framebuffer(FBDimensionType width_, FBDimensionType height_) :
     Framebuffer(width_, height_),
@@ -19,22 +21,20 @@ inline void SSD1306Framebuffer::modeData()
 
 void SSD1306Framebuffer::writeData(uint8_t val)
 {
-    modeData();
-    spi_selectChip(&AVR32_SPI, spi_port);
     while ((AVR32_SPI.sr & AVR32_SPI_SR_TDRE_MASK) == 0);
+    //~ modeData();
     AVR32_SPI.tdr = (val << AVR32_SPI_TDR_TD_OFFSET);
-    while ((AVR32_SPI.sr & AVR32_SPI_SR_TDRE_MASK) == 0);
-    spi_unselectChip(&AVR32_SPI, spi_port);
+    //~ while ((AVR32_SPI.sr & AVR32_SPI_SR_TDRE_MASK) == 0);
 }
 
 void SSD1306Framebuffer::writeCmd(uint8_t val)
 {
-    modeCmd();
-    spi_selectChip(&AVR32_SPI, spi_port);
+    spi_selectChip(SSD1306_SPI, spi_port);
     while ((AVR32_SPI.sr & AVR32_SPI_SR_TDRE_MASK) == 0);
+    modeCmd();
     AVR32_SPI.tdr = (val << AVR32_SPI_TDR_TD_OFFSET);
     //~ while ((AVR32_SPI.sr & AVR32_SPI_SR_TDRE_MASK) == 0);
-    spi_unselectChip(&AVR32_SPI, spi_port);
+    spi_unselectChip(SSD1306_SPI, spi_port);
 }
 
 void SSD1306Framebuffer::resetHigh()
@@ -63,16 +63,20 @@ void SSD1306Framebuffer::initSPI()
     // GPIO pins used for OLED interface
     static const gpio_map_t SPI_GPIO_MAP =
     {
-        {AVR32_SPI_SCK_0_0_PIN,  AVR32_SPI_SCK_0_0_FUNCTION },  // SPI Clock.
-        {AVR32_SPI_MISO_0_0_PIN, AVR32_SPI_MISO_0_0_FUNCTION},  // MISO.
-        {AVR32_SPI_MOSI_0_0_PIN, AVR32_SPI_MOSI_0_0_FUNCTION},  // MOSI.
-        {AVR32_SPI_NPCS_0_0_PIN, AVR32_SPI_NPCS_0_0_FUNCTION}  // Chip Select NPCS0.
+        {SSD1306_SPI_SCK_PIN,  SSD1306_SPI_SCK_FUNCTION },  // SPI Clock.
+        {SSD1306_SPI_MISO_PIN, SSD1306_SPI_MISO_FUNCTION},  // MISO.
+        {SSD1306_SPI_MOSI_PIN, SSD1306_SPI_MOSI_FUNCTION},  // MOSI.
+        {SSD1306_SPI_NPCS_PIN, SSD1306_SPI_NPCS_FUNCTION}   // Chip Select NPCS0.
     };
 
     // SPI OLED options.
     spi_options_t spiOptions;
     spiOptions.reg          = 0;
-    spiOptions.baudrate     = 30000000;
+    #if FPBA_HZ < 10000000
+    spiOptions.baudrate     = FPBA_HZ;
+    #else
+    spiOptions.baudrate     = 10000000; // SSD1306 datasheet says min 100ns clock cycle
+    #endif
     spiOptions.bits         = 8;
     spiOptions.spck_delay   = 0;
     spiOptions.trans_delay  = 0;
@@ -85,20 +89,20 @@ void SSD1306Framebuffer::initSPI()
                        sizeof(SPI_GPIO_MAP) / sizeof(SPI_GPIO_MAP[0]));
 
     // If the SPI used by the SD/MMC is not enabled.
-    if (!spi_is_enabled(&AVR32_SPI))
+    if (!spi_is_enabled(SSD1306_SPI))
     {
         // Initialize as master.
-        spi_initMaster(&AVR32_SPI, &spiOptions);
+        spi_initMaster(SSD1306_SPI, &spiOptions);
 
         // Set selection mode: variable_ps, pcs_decode, delay.
-        spi_selectionMode(&AVR32_SPI, 0, 0, 0);
+        spi_selectionMode(SSD1306_SPI, 0, 0, 0);
 
         // Enable SPI.
-        spi_enable(&AVR32_SPI);
+        spi_enable(SSD1306_SPI);
     }
 
     // Setup SPI registers according to spiOptions.
-    spi_setupChipReg(&AVR32_SPI, &spiOptions, 30000000);
+    spi_setupChipReg(SSD1306_SPI, &spiOptions, FPBA_HZ);
 
 }
 
@@ -165,14 +169,18 @@ void SSD1306Framebuffer::flush()
     uint8_t* data_ptr = &data[0];
     setPage(0);
     setColumn(0);
+    modeData();
+    spi_selectChip(SSD1306_SPI, spi_port);
     for (uint8_t page = 0; page < num_pages; ++page)
     {
         // setPage(page); // not necessary because of memory horizontal addressing mode, see datasheet for SSD1306.
         for (uint8_t column = 0; column < num_columns; ++column)
         {
-            writeData(*data_ptr);
+            //~ writeData(*data_ptr);
+            spi_write(SSD1306_SPI, *data_ptr);
             ++data_ptr;
             //~ delay(10); // for debugging
         }
     }
+    spi_unselectChip(SSD1306_SPI, spi_port);
 }
