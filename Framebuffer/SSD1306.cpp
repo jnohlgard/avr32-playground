@@ -2,10 +2,14 @@
 #include "board.h"
 #include "conf_clock.h"
 
-SSD1306Framebuffer::SSD1306Framebuffer(FBDimensionType width_, FBDimensionType height_) :
-    Framebuffer(width_, height_),
+SSD1306Framebuffer::SSD1306Framebuffer(volatile avr32_spi_t* spi_, unsigned char spi_chip_, uint32_t pin_dc_, uint32_t pin_rst_, FBDimensionType width_, FBDimensionType height_, uint8_t* data_) :
+    Framebuffer(width_, height_, data_),
     num_pages(height / 8), // 8 pixel rows per data byte
-    num_columns(width)
+    num_columns(width),
+    pin_dc(pin_dc_),
+    pin_rst(pin_rst_),
+    spi_chip(spi_chip_),
+    spi(spi_)
 {
 }
 
@@ -29,12 +33,12 @@ void SSD1306Framebuffer::writeData(uint8_t val)
 
 void SSD1306Framebuffer::writeCmd(uint8_t val)
 {
-    spi_selectChip(SSD1306_SPI, spi_port);
+    spi_selectChip(spi, spi_chip);
     while ((AVR32_SPI.sr & AVR32_SPI_SR_TDRE_MASK) == 0);
     modeCmd();
     AVR32_SPI.tdr = (val << AVR32_SPI_TDR_TD_OFFSET);
     //~ while ((AVR32_SPI.sr & AVR32_SPI_SR_TDRE_MASK) == 0);
-    spi_unselectChip(SSD1306_SPI, spi_port);
+    spi_unselectChip(spi, spi_chip);
 }
 
 void SSD1306Framebuffer::resetHigh()
@@ -58,20 +62,12 @@ void SSD1306Framebuffer::delay(uint32_t val)
     }
 }
 
+/// \note GPIO pins must be assigned to SPI module using gpio_enable_module() before initializing the display.
 void SSD1306Framebuffer::initSPI()
 {
-    // GPIO pins used for OLED interface
-    static const gpio_map_t SPI_GPIO_MAP =
-    {
-        {SSD1306_SPI_SCK_PIN,  SSD1306_SPI_SCK_FUNCTION },  // SPI Clock.
-        {SSD1306_SPI_MISO_PIN, SSD1306_SPI_MISO_FUNCTION},  // MISO.
-        {SSD1306_SPI_MOSI_PIN, SSD1306_SPI_MOSI_FUNCTION},  // MOSI.
-        {SSD1306_SPI_NPCS_PIN, SSD1306_SPI_NPCS_FUNCTION}   // Chip Select NPCS0.
-    };
-
     // SPI OLED options.
     spi_options_t spiOptions;
-    spiOptions.reg          = 0;
+    spiOptions.reg          = spi_chip;
     #if FPBA_HZ < 10000000
     spiOptions.baudrate     = FPBA_HZ;
     #else
@@ -84,44 +80,43 @@ void SSD1306Framebuffer::initSPI()
     spiOptions.spi_mode     = 0;
     spiOptions.modfdis      = 1;
 
-    // Assign I/Os to SPI.
-    gpio_enable_module(SPI_GPIO_MAP,
-                       sizeof(SPI_GPIO_MAP) / sizeof(SPI_GPIO_MAP[0]));
-
     // If the SPI used by the SD/MMC is not enabled.
-    if (!spi_is_enabled(SSD1306_SPI))
+    if (!spi_is_enabled(spi))
     {
         // Initialize as master.
-        spi_initMaster(SSD1306_SPI, &spiOptions);
+        spi_initMaster(spi, &spiOptions);
 
         // Set selection mode: variable_ps, pcs_decode, delay.
-        spi_selectionMode(SSD1306_SPI, 0, 0, 0);
+        spi_selectionMode(spi, 0, 0, 0);
 
         // Enable SPI.
-        spi_enable(SSD1306_SPI);
+        spi_enable(spi);
     }
 
     // Setup SPI registers according to spiOptions.
-    spi_setupChipReg(SSD1306_SPI, &spiOptions, FPBA_HZ);
-
+    spi_setupChipReg(spi, &spiOptions, FPBA_HZ);
 }
 
 void SSD1306Framebuffer::setPage(uint8_t page)
 {
-    writeCmd(0x22);
+    writeCmd(cmd_setPage);
     writeCmd(page);  // start
-    writeCmd(7);     // after this page we wrap around
+    writeCmd(num_pages - 1);     // after page 7 we wrap around
 }
 
 void SSD1306Framebuffer::setColumn(uint8_t col)
 {
-    writeCmd(0x21);
+    writeCmd(cmd_setColumn);
     writeCmd(col);  // start
-    writeCmd(127);  // after this column we move to the next page
+    writeCmd(num_columns - 1);  // after column 127 we move to the next page
 }
 
 void SSD1306Framebuffer::init()
 {
+    if (data == 0)
+    {
+        data = static_cast<uint8_t*>(malloc(kSize));
+    }
     initSPI();
     resetLow();
     delay(30);
@@ -166,21 +161,42 @@ void SSD1306Framebuffer::flush()
     // Each byte represents 8 rows and 1 column on the display
 
     // We will write 8 lines at a time.
-    uint8_t* data_ptr = &data[0];
+    uint8_t* data_ptr;
+    //~ setPage(offset_y);
     setPage(0);
     setColumn(0);
     modeData();
-    spi_selectChip(SSD1306_SPI, spi_port);
+    spi_selectChip(spi, spi_chip);
+    //~ data_ptr = data + offset_y * num_columns;
+    //~ for (uint8_t page = offset_y; page < num_pages; ++page)
+    //~ {
+        //~ // setPage(page); // not necessary because of memory horizontal addressing mode, see datasheet for SSD1306.
+        //~ for (uint8_t column = 0; column < num_columns; ++column)
+        //~ {
+            //~ writeData(*data_ptr);
+            //~ spi_write(spi, *data_ptr);
+            //~ ++data_ptr;
+            //~ delay(10); // for debugging
+        //~ }
+    //~ }
+    data_ptr = data;
+    //~ for (uint8_t page = 0; page < offset_y; ++page)
     for (uint8_t page = 0; page < num_pages; ++page)
     {
         // setPage(page); // not necessary because of memory horizontal addressing mode, see datasheet for SSD1306.
         for (uint8_t column = 0; column < num_columns; ++column)
         {
             //~ writeData(*data_ptr);
-            spi_write(SSD1306_SPI, *data_ptr);
+            spi_write(spi, *data_ptr);
             ++data_ptr;
             //~ delay(10); // for debugging
         }
     }
-    spi_unselectChip(SSD1306_SPI, spi_port);
+    spi_unselectChip(spi, spi_chip);
+}
+
+void SSD1306Framebuffer::vscroll8(int8_t offset)
+{
+    offset_y += offset;
+    offset_y %= num_pages;
 }

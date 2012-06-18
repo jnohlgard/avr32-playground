@@ -10,12 +10,14 @@ class Framebuffer
         typedef uint8_t FBDimensionType;
         typedef uint16_t FBLengthType;
 
-        static const FBLengthType kSize = 128 * 64/8; ///< @bug hard-coded framebuffer length
-        FBDimensionType width;
-        FBDimensionType height;
+        const FBDimensionType width;
+        const FBDimensionType height;
+        const FBLengthType kSize;
+        FBDimensionType offset_y;
+        //~ FBDimensionType offset_x;
 
     public:
-        Framebuffer(FBDimensionType width_, FBDimensionType height_);
+        Framebuffer(FBDimensionType width_, FBDimensionType height_, uint8_t* data_);
 
         virtual void init();
 
@@ -29,10 +31,9 @@ class Framebuffer
         /// copy a block into framebuffer at arbitrary non divide-by-8 y position
         virtual void blit(uint8_t x0, uint8_t y0, const uint8_t buffer_width, const uint8_t buffer_height, const uint8_t* buf);
 
-        /// Text using a bitmap font
-        virtual void text(const uint8_t x0, const uint8_t y0, const int length, const char* str, const int font_length, const uint8_t* font, bool monospaced);
+        /// Vertical scroll by a multiple of 8
+        virtual void vscroll8(int8_t offset);
 
-
-        uint8_t data[kSize];
+        uint8_t* data;
 };
 #endif

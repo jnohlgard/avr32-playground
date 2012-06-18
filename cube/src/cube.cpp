@@ -40,7 +40,8 @@ Vector4f cube_vertices[8];
 uint8_t cube_indices[24];
 static const uint8_t num_cubes = 5;
 
-FBDev fb(128, 64);
+SSD1306Framebuffer fb(SSD1306_SPI, SSD1306_SPI_NPCS, SSD1306_GPIO_DC_PIN, SSD1306_GPIO_RST_PIN, 128, 64);
+//~ FBDev fb(128, 64);
 
 void initCube(void)
 {
@@ -251,14 +252,14 @@ void loop(void)
     memset(fps_str, '\0', sizeof(fps_str));
     sprintf(fps_str, "fps: %4.3f", fps);
     char test_str[] = "Hej detta är ett\ntest åäö hopp";
-    fb.text(0, 0, sizeof(fps_str), fps_str, 255, Fonts::font3x5, false);
-    fb.text(0, 30, sizeof(test_str), test_str, 255, Fonts::font3x5, false);
+    //~ fb.text(0, 0, sizeof(fps_str), fps_str, 255, Fonts::font3x5, false);
+    //~ fb.text(0, 30, sizeof(test_str), test_str, 255, Fonts::font3x5, false);
     long n = Get_sys_count();
     fb.flush();
     n = cpu_cy_2_us(Get_sys_count() - n, 60000000);
     memset(fps_str, '\0', sizeof(fps_str));
     sprintf(fps_str, "Flush: %9ld us", n);
-    fb.text(0, 6, sizeof(fps_str), fps_str, 255, Fonts::font3x5, false);
+    //~ fb.text(0, 6, sizeof(fps_str), fps_str, 255, Fonts::font3x5, false);
     fb.flush();
     #ifdef PROFILING
     us = micros() - us;

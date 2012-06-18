@@ -15,12 +15,10 @@ class SSD1306Framebuffer : public Framebuffer
     private:
         const uint32_t num_pages;
         const uint32_t num_columns;
-        static const uint32_t pin_sda  = AVR32_PIN_PA14;
-        static const uint32_t pin_scl  = AVR32_PIN_PA15;
-        static const uint32_t pin_dc   = AVR32_PIN_PA21;
-        static const uint32_t pin_rst  = AVR32_PIN_PA22;
-        static const uint32_t pin_cs   = AVR32_PIN_PA16;
-        static const uint32_t spi_port = 0;
+        const uint32_t pin_dc;
+        const uint32_t pin_rst;
+        const unsigned char spi_chip;
+        volatile avr32_spi_t* spi;
 
         void modeCmd();
         void modeData();
@@ -38,9 +36,16 @@ class SSD1306Framebuffer : public Framebuffer
         void setColumn(uint8_t col);
 
     public:
-        SSD1306Framebuffer(FBDimensionType width_, FBDimensionType height_);
+        explicit SSD1306Framebuffer(volatile avr32_spi_t* spi_, unsigned char spi_chip_, uint32_t pin_dc_, uint32_t pin_rst_, FBDimensionType width_, FBDimensionType height_, uint8_t* data_ = 0);
 
         void init();
         void flush();
+        void vscroll8(int8_t offset);
+
+
+    private:
+        // Hardware commands, see datasheet
+        static const uint8_t cmd_setColumn = 0x21;
+        static const uint8_t cmd_setPage   = 0x22;
 };
 #endif

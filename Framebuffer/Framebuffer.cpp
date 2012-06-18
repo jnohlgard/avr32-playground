@@ -3,9 +3,11 @@
 #define abs(x) ((x)>0?(x):-(x))
 #endif
 
-Framebuffer::Framebuffer(FBDimensionType width_, FBDimensionType height_) :
+Framebuffer::Framebuffer(FBDimensionType width_, FBDimensionType height_, uint8_t* data_) :
             width(width_),
-            height(height_)
+            height(height_),
+            kSize(width * height/8),
+            data(data_)
 {
 }
 
@@ -159,40 +161,7 @@ void Framebuffer::blit(uint8_t x0, uint8_t y0, const uint8_t buffer_width, const
     }
 }
 
-/// Draw text using a bitmap font
-/**
- * Font format:
- * parameters followed by data in a uint8 array
- * uint8 maximum glyph width
- * uint8 common glyph height
- * uint8 bytes per glyph
- * data:
- *   uint8 this glyph width
- *   uint8[stride-1] pixel data
- */
-void Framebuffer::text(const uint8_t x0, const uint8_t y0, const int length, const char* str, const int font_length, const uint8_t* font, bool monospaced)
+void Framebuffer::vscroll8(int8_t offset)
 {
-    uint8_t x = x0;
-    uint8_t y = y0;
-    uint8_t width = font[0];
-    uint8_t height = font[1];
-    uint8_t stride = font[2];
-    uint8_t font_base = font[3];
-    static const uint8_t data_offset = 4;
-    for (int i = 0; i < length; ++i)
-    {
-        int index = str[i] - font_base;
-        if (index < 0 || index >= font_length)
-        {
-            continue;
-        }
-
-        if (!monospaced)
-        {
-            width = font[index * stride + data_offset];
-        }
-        const uint8_t* glyph = &font[index * stride + data_offset + 1];
-        blit(x, y, width, height, glyph);
-        x += width + 1;
-    }
+    offset_y += offset;
 }
