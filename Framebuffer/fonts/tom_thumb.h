@@ -6,10 +6,10 @@ namespace Fonts
 {
 #endif
 static const unsigned char tom_thumb[] = {
-    3, // w
-    6, // h
-    4, // stride
+    6, // height
+    4, // stride (bytes per char)
     0x20, // ascii index of first non-empty character in font
+    0xFF, // ascii index of last non-empty character in font
     // data
     0x01, 0x00, 0x00, 0x00,  // 32 ' '
     0x01, 0x17, 0x00, 0x00,  // 33 '!'
