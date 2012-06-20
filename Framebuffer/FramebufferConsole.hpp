@@ -23,7 +23,7 @@ class FramebufferConsole : public BaseOutStream
         bool bound;
 
     public:
-        FramebufferConsole(Framebuffer* fb_, const uint8_t* font = 0);
+        explicit FramebufferConsole(Framebuffer* fb_, const uint8_t* font = 0);
         FramebufferConsole();
         FramebufferConsole(const FramebufferConsole& other);
         FramebufferConsole& operator=(const FramebufferConsole& other);
