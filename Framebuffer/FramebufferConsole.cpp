@@ -13,7 +13,7 @@
  *   uint8[stride-1] pixel data
  */
 FramebufferConsole::FramebufferConsole(Framebuffer* fb_, const uint8_t* font) :
-    row(0), col(0), monospace(0), fb(fb_)
+    row(0), col(0), monospace(0), fb(fb_), bound(fb_ != 0)
 {
     if (font != 0)
     {
@@ -71,6 +71,12 @@ FramebufferConsole& FramebufferConsole::operator=(const FramebufferConsole& othe
     return *this;
 }
 
+void FramebufferConsole::bind(Framebuffer* fb_)
+{
+    fb = fb_;
+    bound = (fb != 0);
+}
+
 void FramebufferConsole::setFont(const uint8_t* font)
 {
     if (font != 0)
@@ -123,7 +129,7 @@ void FramebufferConsole::newline()
     }
 }
 
-uint8_t FramebufferConsole::getWidth(uint8_t ch)
+uint8_t FramebufferConsole::getWidth(char_type ch)
 {
     int index = ch - font_base;
     if (index < 0 || index >= font_max)
@@ -134,7 +140,7 @@ uint8_t FramebufferConsole::getWidth(uint8_t ch)
     return width;
 }
 
-uint8_t FramebufferConsole::putChar(uint8_t ch)
+uint8_t FramebufferConsole::putChar(char_type ch)
 {
     int index = ch - font_base;
     if (index < 0 || index >= font_max)
@@ -147,32 +153,34 @@ uint8_t FramebufferConsole::putChar(uint8_t ch)
     return width;
 }
 
-/// Draw text using a bitmap font
-/**
- * \note this does not respect \0 end of string bytes, for that functionality, use print()
- */
-void FramebufferConsole::textAt(const uint8_t x0, const uint8_t y0, size_t length, const unsigned char* str)
+BaseOutStream& FramebufferConsole::flush()
 {
-    setPos(x0, y0);
-    for (unsigned int i = 0; i < length; ++i)
-    {
-        uint8_t width = putChar(str[i]);
-
-        if (monospace == 0)
-        {
-            col += width + 1;
-        }
-        else
-        {
-            col += monospace;
-        }
-    }
+    fb->flush();
+    return *this;
 }
 
-void FramebufferConsole::print(size_t length, const unsigned char* str)
+BaseOutStream& FramebufferConsole::put(char_type ch)
+{
+    int index = ch - font_base;
+    if (index < 0 || index >= font_max)
+    {
+        return *this;
+    }
+    uint8_t width = getWidth(ch);
+    if (col + width > fb->width)
+    {
+        newline();
+    }
+    const uint8_t* glyph = &font_data_ptr[index * font_stride + 1];
+    fb->blit(col, row, width, font_height, glyph);
+
+    return *this;
+}
+
+BaseOutStream& FramebufferConsole::write(const char_type* str, size_type count)
 {
     bool CR_before = false; // workaround to handle all of \r, \r\n and \n as newlines.
-    for (unsigned int i = 0; i < length; ++i)
+    for (unsigned int i = 0; i < count; ++i)
     {
         unsigned char ch = str[i];
         if (ch == '\0')
@@ -207,14 +215,51 @@ void FramebufferConsole::print(size_t length, const unsigned char* str)
             col += width + 1;
         }
     }
+    return *this;
 }
 
-void FramebufferConsole::print(const char* str)
+/// Draw text using a bitmap font
+/**
+ * \note this does not respect \0 end of string bytes, for that functionality, use print()
+ */
+void FramebufferConsole::textAt(const uint8_t x0, const uint8_t y0, size_t length, const unsigned char* str)
 {
-    int i = 0;
+    setPos(x0, y0);
+    for (unsigned int i = 0; i < length; ++i)
+    {
+        uint8_t width = putChar(str[i]);
+
+        if (monospace == 0)
+        {
+            col += width + 1;
+        }
+        else
+        {
+            col += monospace;
+        }
+    }
+}
+
+void FramebufferConsole::print(const char_type* str)
+{
+    size_type i = 0;
     while (str[i] != '\0')
     {
         ++i;
     }
-    print(i, (const unsigned char*)str);
+    write(str, i);
+}
+
+void FramebufferConsole::print(uint32_t num)
+{
+    char_type str[11];
+    format_ulong(&str[0], num, 10, sizeof(str));
+    print(str);
+}
+
+void FramebufferConsole::print(int32_t num)
+{
+    char_type str[11];
+    format_long(&str[0], num, 10, sizeof(str));
+    print(str);
 }
