@@ -87,7 +87,7 @@
 #define SD_MMC_SPI_NPCS_FUNCTION    AVR32_SPI_NPCS_1_0_FUNCTION
 //! @}
 
-/*! \name SPI Connections of the SSD1306 OLED display controller
+/*! \name GPIO and SPI Connections of the SSD1306 OLED display controller
  */
 //! @{
 #define SSD1306_SPI                 (&AVR32_SPI)
@@ -102,6 +102,8 @@
 #define SSD1306_SPI_MOSI_FUNCTION   AVR32_SPI_MOSI_0_0_FUNCTION
 #define SSD1306_SPI_NPCS_PIN        AVR32_SPI_NPCS_0_0_PIN
 #define SSD1306_SPI_NPCS_FUNCTION   AVR32_SPI_NPCS_0_0_FUNCTION
+#define SSD1306_DISPLAY_WIDTH       128
+#define SSD1306_DISPLAY_HEIGHT      64
 //! @}
 
 /*! \name USART connection to the UC3B board controller
@@ -142,14 +144,41 @@
 #define WM8978_TWI_SDA_FUNCTION      AVR32_TWI_SDA_0_0_FUNCTION
 //! @}
 
-/*! \name TWI Connections of the Spare TWI Connector
+/*! \name TWI (i2c) connections of the S-EXT header
  */
 //! @{
-#define SPARE_TWI                   (&AVR32_TWI)
-#define SPARE_TWI_SCL_PIN           AVR32_TWI_SCL_0_0_PIN
-#define SPARE_TWI_SCL_FUNCTION      AVR32_TWI_SCL_0_0_FUNCTION
-#define SPARE_TWI_SDA_PIN           AVR32_TWI_SDA_0_0_PIN
-#define SPARE_TWI_SDA_FUNCTION      AVR32_TWI_SDA_0_0_FUNCTION
+#define SEXT_TWI                   (&AVR32_TWI)
+#define SEXT_TWI_SCL_PIN           AVR32_TWI_SCL_0_0_PIN
+#define SEXT_TWI_SCL_FUNCTION      AVR32_TWI_SCL_0_0_FUNCTION
+#define SEXT_TWI_SDA_PIN           AVR32_TWI_SDA_0_0_PIN
+#define SEXT_TWI_SDA_FUNCTION      AVR32_TWI_SDA_0_0_FUNCTION
+
+/*! \name USART connections of the S-EXT header
+ */
+//! @}
+#define SEXT_USART                       (&AVR32_USART2)
+#define SEXT_USART_RXD_PIN               AVR32_USART2_RXD_0_0_PIN
+#define SEXT_USART_RXD_FUNCTION          AVR32_USART2_RXD_0_0_FUNCTION
+#define SEXT_USART_TXD_PIN               AVR32_USART2_TXD_0_0_PIN
+#define SEXT_USART_TXD_FUNCTION          AVR32_USART2_TXD_0_0_FUNCTION
+#define SEXT_USART_IRQ                   AVR32_USART2_IRQ
+#define SEXT_USART_IRQ_GROUP             AVR32_USART2_IRQ_GROUP
+#define SEXT_USART_SYSCLK                SYSCLK_USART2
+//! @}
+
+/*! \name SPI connections of the S-EXT header
+ */
+//! @{
+#define SEXT_SPI                  (&AVR32_SPI)
+#define SEXT_SPI_NPCS             2
+#define SEXT_SPI_SCK_PIN          AVR32_SPI_SCK_0_0_PIN
+#define SEXT_SPI_SCK_FUNCTION     AVR32_SPI_SCK_0_0_FUNCTION
+#define SEXT_SPI_MISO_PIN         AVR32_SPI_MISO_0_0_PIN
+#define SEXT_SPI_MISO_FUNCTION    AVR32_SPI_MISO_0_0_FUNCTION
+#define SEXT_SPI_MOSI_PIN         AVR32_SPI_MOSI_0_0_PIN
+#define SEXT_SPI_MOSI_FUNCTION    AVR32_SPI_MOSI_0_0_FUNCTION
+#define SEXT_SPI_NPCS_PIN         AVR32_SPI_NPCS_2_1_PIN
+#define SEXT_SPI_NPCS_FUNCTION    AVR32_SPI_NPCS_2_1_FUNCTION
 //! @}
 
 #endif // USER_BOARD_H
