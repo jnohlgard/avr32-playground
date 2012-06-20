@@ -5,10 +5,18 @@ set(ELFFILE console.elf)
 set(HEXFILE console.hex)
 
 add_executable(${ELFFILE}
-    console.cpp
     ../../Framebuffer/Framebuffer.cpp
     ../../Framebuffer/FramebufferConsole.cpp
     ../../Framebuffer/SSD1306.cpp
+    ../../Stream/formatting.cpp
+    ../../Stream/BaseOutStream.cpp
+    ../../system/system_init.c
+    ../../system/tick.c
+    ../../system/console.cpp
+    ../../system/framebuffer.cpp
+    ../../system/streams.cpp
+    ${AVR32_USER_BOARD_DIR}/system_init.cpp
+    console.cpp
     ${AVR32_USER_BOARD_DIR}/init.c
     ${ASF_SOURCE_FILES}
     ${AVR32_TRAMPOLINE}
