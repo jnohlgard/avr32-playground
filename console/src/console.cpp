@@ -54,24 +54,10 @@ void loop()
     gout << ":" << (int16_t)system_ticks << " = " << system_ticks << ";";
     //~ gout << system_ticks;
     //~ gout << (int16_t)13830;
-    if(false)
-    {
-        uint32_t n = system_ticks;
-        char tmp[11];
-        int i = sizeof(tmp) - 1;
-
-        // Convert the given number to an ASCII decimal representation.
-        tmp[i] = '\0';
-        do
-        {
-            tmp[--i] = '0' + n % 10;
-            n /= 10;
-        } while (n);
-        gout.print(tmp+i);
-        //~ usart_write_line(USART, tmp+i);
-    }
     //~ gout.print(1, &i);
     //~ fb->text(0, 40, 1, &i, sizeof(Fonts::font3x5), Fonts::font3x5, 0);
+    uout << "Hej: " << system_ticks;
+    uout.newline();
     fb->flush();
     for(int u = 0; u < 1000000; ++u)
     {

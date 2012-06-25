@@ -23,6 +23,7 @@ set(ASF_DRIVERS
     )
 set(ASF_SERVICES
     sysclk
+    usart_serial
     # etc...
     )
 include(atmel-software-framework)

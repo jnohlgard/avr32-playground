@@ -13,7 +13,7 @@
  *   uint8[stride-1] pixel data
  */
 FramebufferConsole::FramebufferConsole(Framebuffer* fb_, const uint8_t* font) :
-    row(0), col(0), monospace(0), fb(fb_), bound(fb_ != 0)
+    row(0), col(0), monospace(0), fb(fb_), bound(fb != 0)
 {
     if (font != 0)
     {
@@ -32,7 +32,7 @@ FramebufferConsole::FramebufferConsole(Framebuffer* fb_, const uint8_t* font) :
 }
 
 FramebufferConsole::FramebufferConsole() :
-    row(0), col(0), monospace(0), fb(0),
+    row(0), col(0), monospace(0), fb(0), bound(fb != 0),
     font_ptr(0),
     font_len(0),
     font_height(0),
@@ -44,7 +44,7 @@ FramebufferConsole::FramebufferConsole() :
 }
 
 FramebufferConsole::FramebufferConsole(const FramebufferConsole& other) :
-    row(other.row), col(other.col), monospace(other.monospace), fb(other.fb),
+    row(other.row), col(other.col), monospace(other.monospace), fb(other.fb), bound(fb != 0),
     font_ptr(other.font_ptr),
     font_len(other.font_len),
     font_height(other.font_height),
@@ -60,6 +60,7 @@ FramebufferConsole& FramebufferConsole::operator=(const FramebufferConsole& othe
     row = other.row;
     col = other.col;
     fb  = other.fb;
+    bound = (fb != 0);
     monospace = other.monospace;
     font_ptr = other.font_ptr;
     font_len = other.font_len;

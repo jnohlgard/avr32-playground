@@ -13,6 +13,7 @@ class FramebufferConsole : public BaseOutStream
         uint8_t row, col;
         uint8_t monospace;
         Framebuffer* fb;
+        bool bound;
         const unsigned char* font_ptr;
         unsigned int font_len;
         uint8_t font_height;
@@ -20,7 +21,6 @@ class FramebufferConsole : public BaseOutStream
         uint8_t font_base;
         uint8_t font_max;
         const unsigned char* font_data_ptr;
-        bool bound;
 
     public:
         explicit FramebufferConsole(Framebuffer* fb_, const uint8_t* font = 0);

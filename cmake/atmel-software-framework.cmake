@@ -32,6 +32,7 @@ SET(ASF_PLATFORM_INCLUDES
 
 set(ASF_DRIVER_cycle_counter_EXTRA_SEARCHPATH "${ASF_PATH}/${ASF_PLATFORM}/drivers/cpu/cycle_counter")
 set(ASF_DRIVER_power_clocks_lib_EXTRA_SEARCHPATH "${ASF_PATH}/${ASF_PLATFORM}/drivers/pm")
+set(ASF_SERVICE_usart_serial_EXTRA_SEARCHPATH "${ASF_PATH}/common/services/serial")
 set(ASF_SERVICE_sysclk_EXTRA_SEARCHPATH
     "${ASF_PATH}/common/services/clock"
     "${ASF_PATH}/common/services/clock/${ASF_CPU}")

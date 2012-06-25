@@ -5,11 +5,11 @@
 #include "conf_system.h"
 //~ #include <drivers/intc/intc.h>
 //~ #include <drivers/tc/tc.h>
-#include <services/clock/sysclk.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <services/clock/sysclk.h>
 
 #ifdef CONF_SYSTEM_OLED_CONSOLE
 
@@ -43,13 +43,12 @@ void initConsole(void)
 #endif // CONF_SYSTEM_CONSOLE
 
 #ifdef CONF_SYSTEM_SERIAL_CONSOLE
-
-#include <drivers/usart/usart.h>
+#include <services/serial/serial.h>
 
 void initSerialConsole(void)
 {
     // USART options.
-    usart_options_t usart_options;
+    static usart_serial_options_t usart_options;
     usart_options.baudrate     = CONF_SYSTEM_SERIAL_CONSOLE_BAUDRATE;
     usart_options.charlength   = CONF_SYSTEM_SERIAL_CONSOLE_CHARLENGTH;
     usart_options.paritytype   = CONF_SYSTEM_SERIAL_CONSOLE_PARITY;
@@ -57,8 +56,10 @@ void initSerialConsole(void)
     usart_options.channelmode  = CONF_SYSTEM_SERIAL_CONSOLE_CHANNELMODE;
 
     // Initialize USART in RS232 mode.
-    sysclk_enable_peripheral_clock(USART);
-    usart_init_rs232(USART, &usart_options, sysclk_get_peripheral_bus_hz(USART));
+    //~ sysclk_enable_peripheral_clock(USART);
+    usart_serial_init(USART, &usart_options);
+    //~ usart_init_rs232(USART, &usart_options, sysclk_get_peripheral_bus_hz(USART));
+    uout.bind(USART);
 
     // Disable all interrupts.
     //~ cpu_irq_disable();
@@ -70,8 +71,8 @@ void initSerialConsole(void)
     //~ cpu_irq_enable();
 
     //~ USART->ier = AVR32_USART_IER_RXRDY_MASK;
-    gout.print("Serial console initialized.\r\n");
-    usart_write_line(USART, "Serial console initialized.\r\n");
+    gout << "Serial console initialized.\r\n";
+    uout << "Serial console initialized.\r\n";
 }
 
 #endif // CONF_SYSTEM_SERIAL_CONSOLE

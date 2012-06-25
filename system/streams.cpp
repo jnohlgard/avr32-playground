@@ -1,4 +1,5 @@
 #include "system/streams.hpp"
 
-// gout has to be manually bound to a framebuffer before using.
+// gout and uout have to be manually bound to a framebuffer/usart before using.
 FramebufferConsole gout;
+USARTStream uout;

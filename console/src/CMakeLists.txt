@@ -10,6 +10,7 @@ add_executable(${ELFFILE}
     ../../Framebuffer/SSD1306.cpp
     ../../Stream/formatting.cpp
     ../../Stream/BaseOutStream.cpp
+    ../../Stream/USARTStream.cpp
     ../../system/system_init.c
     ../../system/tick.c
     ../../system/console.cpp
