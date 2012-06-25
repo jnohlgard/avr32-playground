@@ -38,7 +38,7 @@
 namespace IMU {
 
     /// Data type for raw gyro readings
-    typedef uint32_t GyroValue;
+    typedef uint16_t GyroValue;
 
     /// Data type for raw accelerometer readings
     typedef uint16_t AccelerometerValue;

@@ -214,9 +214,9 @@ namespace IMU {
             // we should multiply the read value by 4.5 to get the absolute
             // value in fast mode.
             // Parse slow bit from packet
-            wx_scale = ((buf[4] & 0x02) >> 1) ? gyro_slow_scale : gyro_fast_scale;
-            wy_scale = ((buf[3] & 0x01) >> 0) ? gyro_slow_scale : gyro_fast_scale;
-            wz_scale = ((buf[3] & 0x02) >> 1) ? gyro_slow_scale : gyro_fast_scale;
+            wx_scale = (((buf[4] & 0x02) >> 1) ? gyro_slow_scale : gyro_fast_scale);
+            wy_scale = (((buf[3] & 0x01) >> 0) ? gyro_slow_scale : gyro_fast_scale);
+            wz_scale = (((buf[3] & 0x02) >> 1) ? gyro_slow_scale : gyro_fast_scale);
         }
         else if ((buf[kExtensionConnectedByte] & kExtensionConnectedBitmask) &&
             ((buf[kExtensionIDByte] & kExtensionIDBitmask) == kExtensionIDNunchuk))
