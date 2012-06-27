@@ -19,7 +19,7 @@ WiiMotionPlus wmp(CONF_SYSTEM_TWI, WiiMotionPlus::kDefaultMotionPlusPort, WiiMot
 
 void loop()
 {
-    fb->flush();
+    wmp.measure(); // Accelerometer and gyro are updated in lockstep
     wmp.measure();
     gout << "A: " << wmp.getAccelerometerX() << ", " << wmp.getAccelerometerY() << ", " << wmp.getAccelerometerZ() << "\n";
     fb->flush();
@@ -36,14 +36,9 @@ int main(int, char**)
 {
     // Initialize hardware
     system_init();
+    fb->flush();
 
-    fb->flush();
     wmp.init();
-    fb->flush();
-    wmp.measure();
-    gout << "A: " << wmp.getAccelerometerX() << ", " << wmp.getAccelerometerY() << ", " << wmp.getAccelerometerZ() << "\n";
-    fb->flush();
-    gout << "W: " << wmp.getGyroX() << ", " << wmp.getGyroY() << ", " << wmp.getGyroZ() << "\n";
     fb->flush();
 
     //~ unsigned char str[] = "Hej!\nblahblah testar\n1234567890123456789012345678901234567890\n\n12345678\n123456789";
