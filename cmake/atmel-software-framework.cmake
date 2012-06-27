@@ -36,6 +36,12 @@ set(ASF_SERVICE_usart_serial_EXTRA_SEARCHPATH "${ASF_PATH}/common/services/seria
 set(ASF_SERVICE_sysclk_EXTRA_SEARCHPATH
     "${ASF_PATH}/common/services/clock"
     "${ASF_PATH}/common/services/clock/${ASF_CPU}")
+set(ASF_SERVICE_twi_master_EXTRA_SEARCHPATH
+    "${ASF_PATH}/common/services/twi"
+    "${ASF_PATH}/common/services/twi/${ASF_ARCH}")
+set(ASF_SERVICE_twi_slave_EXTRA_SEARCHPATH
+    "${ASF_PATH}/common/services/twi"
+    "${ASF_PATH}/common/services/twi/${ASF_ARCH}")
 
 set(ASF_SOURCE_FILES)
 set(ASF_INCLUDE_DIRS)
