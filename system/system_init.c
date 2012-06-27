@@ -7,6 +7,7 @@ extern "C" {
 #endif
 
 #include <services/clock/sysclk.h>
+#include <services/twi/twi_master.h>
 #include <drivers/intc/intc.h>
 #include "system/tick.h"
 #include "system/console.h"
@@ -19,10 +20,20 @@ void initInterrupts(void)
     cpu_irq_disable();
 
     // init the interrupts
-    INTC_init_interrupts();
+    irq_initialize_vectors();
 
     // Enable all interrupts.
     cpu_irq_enable();
+}
+
+void initTWI(void)
+{
+    static twi_master_options_t opt;
+    opt.speed = CONF_SYSTEM_TWI_SPEED;
+    opt.chip  = CONF_SYSTEM_TWI_ADDR;
+
+    // Initialize the TWI master driver.
+    twi_master_setup(CONF_SYSTEM_TWI, &opt);
 }
 
 void system_init(void)
@@ -44,6 +55,10 @@ void system_init(void)
     #ifdef CONF_SYSTEM_TICK_TIMER
         // Initialize system tick timer
         initSystemTickTimer();
+    #endif
+    #ifdef CONF_SYSTEM_TWI
+        // Initialize i2c bus master
+        initTWI();
     #endif
 }
 
