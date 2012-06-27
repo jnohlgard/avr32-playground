@@ -241,26 +241,3 @@ void FramebufferConsole::textAt(const uint8_t x0, const uint8_t y0, size_t lengt
     }
 }
 
-void FramebufferConsole::print(const char_type* str)
-{
-    size_type i = 0;
-    while (str[i] != '\0')
-    {
-        ++i;
-    }
-    write(str, i);
-}
-
-void FramebufferConsole::print(uint32_t num)
-{
-    char_type str[11];
-    format_ulong(&str[0], num, 10, sizeof(str));
-    print(str);
-}
-
-void FramebufferConsole::print(int32_t num)
-{
-    char_type str[11];
-    format_long(&str[0], num, 10, sizeof(str));
-    print(str);
-}
