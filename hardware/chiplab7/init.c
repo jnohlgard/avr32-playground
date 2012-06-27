@@ -88,4 +88,16 @@ void board_init(void)
 	gpio_enable_module(USB_GPIO_MAP,
 			sizeof(USB_GPIO_MAP) / sizeof(USB_GPIO_MAP[0]));
 #endif
+
+#if defined (CONF_BOARD_SEXT_TWI)
+	static const gpio_map_t SEXT_TWI_GPIO_MAP = {
+		{SEXT_TWI_SDA_PIN, SEXT_TWI_SDA_FUNCTION},
+		{SEXT_TWI_SCL_PIN, SEXT_TWI_SCL_FUNCTION},
+	};
+
+	// TWI gpio pins configuration
+	gpio_enable_module(SEXT_TWI_GPIO_MAP,
+			sizeof(SEXT_TWI_GPIO_MAP) / sizeof(SEXT_TWI_GPIO_MAP[0]));
+#endif
+
 }
