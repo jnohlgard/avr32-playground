@@ -30,7 +30,7 @@
  *
  */
 
-#include "IMU.h"
+#include "IMU.hpp"
 
 namespace IMU {
     GyroValue IMUInterface::getGyroX()

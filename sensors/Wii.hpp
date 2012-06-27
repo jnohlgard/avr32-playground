@@ -1,5 +1,5 @@
-#ifndef _SENSORS_WII_H_
-#define _SENSORS_WII_H_
+#ifndef _SENSORS_WII_HPP_
+#define _SENSORS_WII_HPP_
 /**
  * \file Wii.h
  * \author Copyright (C) 2012 Joakim Gebart <joakim.gebart@jge.se>
@@ -32,13 +32,17 @@
  * for passing on to a PC through the Arduino's USB serial port.
  *
  * \section History
+ * \date 27 June 2012 - Ported Arduino sensors library to AVR32.
  * \date 1 March 2012 - Rewrote from scratch and made a separate library.
  * \date 30 october 2010 - First version
  */
 
-#include <stdint.h>
-#include <Wire.h>
-#include "IMU.h"
+#include <cstdint>
+extern "C"
+{
+#include <services/twi/twi_master.h>
+}
+#include "IMU.hpp"
 
 namespace IMU {
 
@@ -109,7 +113,7 @@ namespace IMU {
              * \param [in] extension_address_ i2c address of normal extensions and motionplus after activating, usually 0x52.
              * \param [in] use_nunchuk_ if true, use MotionPlus+Nunchuk combined mode, otherwise only MotionPlus
              */
-            WiiMotionPlus(TwoWire&, uint8_t, uint8_t, bool = false);
+            WiiMotionPlus(twi_master_t, uint8_t, uint8_t, bool = false);
 
             /// Initialize MotionPlus over i2c
             virtual void init();
@@ -134,7 +138,7 @@ namespace IMU {
 
         private:
             void parseSensorData();
-            TwoWire& twi;
+            twi_master_t twi;
             uint8_t wmp_address;
             uint8_t extension_address;
             bool use_nunchuk;

@@ -1,4 +1,4 @@
-#include "Wii.h"
+#include "Wii.hpp"
 /**
  * \file Wii.cpp
  * \author Copyright (C) 2012 Joakim Gebart <joakim.gebart@jge.se>
@@ -31,20 +31,17 @@
  * for passing on to a PC through the Arduino's USB serial port.
  *
  * \section History
+ * \date 27 June 2012 - Ported Arduino sensors library to AVR32.
  * \date 1 March 2012 - Rewrote from scratch and made a separate library.
  * \date 30 october 2010 - First version
  */
+#include "conf_system.h"
+#include "system/system.h"
 
-//~ #define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 1
 
 #ifdef NDEBUG
     #define ENABLE_DEBUG 0
-#endif
-
-#if defined(ARDUINO) && ARDUINO >= 100
-    #include "Arduino.h"
-#else
-    #include "WProgram.h"
 #endif
 
 #ifndef ENABLE_DEBUG
@@ -53,7 +50,7 @@
 
 #if ENABLE_DEBUG
     #ifndef DEBUG_IMU_PORT
-        #define DEBUG_IMU_PORT Serial
+        #define DEBUG_IMU_PORT gout
     #endif
 #else
     #undef DEBUG_IMU_PORT
@@ -61,8 +58,8 @@
 #ifdef DEBUG_IMU_PORT
     // write debug messages to serial port (or other Stream-like object)
     #define DEBUGPRINT(msg) DEBUG_IMU_PORT.print(msg)
-    #define DEBUGPRINTLN(msg) DEBUG_IMU_PORT.println(msg)
-    #define DEBUGPRINTHEX(msg) DEBUG_IMU_PORT.print(msg, HEX)
+    #define DEBUGPRINTLN(msg) DEBUG_IMU_PORT.print(msg).print("\n")
+    #define DEBUGPRINTHEX(msg) DEBUG_IMU_PORT.print(msg)
 #else
     // don't print debug messages
     #define DEBUGPRINT(msg)
@@ -77,7 +74,7 @@ namespace IMU {
     {
     }
 
-    WiiMotionPlus::WiiMotionPlus(TwoWire& twi_, uint8_t wmp_address_,
+    WiiMotionPlus::WiiMotionPlus(twi_master_t twi_, uint8_t wmp_address_,
         uint8_t extension_address_, bool use_nunchuk_) :
         twi(twi_),
         wmp_address(wmp_address_),
@@ -89,47 +86,74 @@ namespace IMU {
     void WiiMotionPlus::init()
     {
         DEBUGPRINT("Initializing Wii MotionPlus...");
-        twi.beginTransmission(wmp_address);
-        twi.write(kAddressInitialize);
-        twi.write(kCommandInitializeExtension);
-        twi.endTransmission();
+        fb->flush();
+        twi_package_t pkg;
+        uint8_t cmd;
+        cmd = kCommandInitializeExtension;
+        pkg.addr[0] = kAddressInitialize;
+        pkg.addr_length = sizeof(uint8_t);
+        pkg.chip = wmp_address;
+        pkg.buffer = (void*)(&cmd);
+        pkg.length = sizeof(cmd);
+        //~ uint32_t status = twi_master_write_ex(twi, &pkg);
+        //~ DEBUGPRINTLN(status);
+        fb->flush();
+        while (twi_master_write(twi, &pkg) != TWI_SUCCESS);
         DEBUGPRINTLN(" done.");
-        delay(WII_INIT_DELAY); // FIXME: Is delay neccessary?
+        fb->flush();
+        //~ delay(WII_INIT_DELAY); // FIXME: Is delay neccessary?
 
         DEBUGPRINT("Set MotionPlus mode: ");
-        twi.beginTransmission(wmp_address); // WMP starts at address 0x53
-        twi.write(kAddressMotionPlusMode);  // write to address 0xFE to select mode
+        fb->flush();
+        pkg.addr[0] = kAddressMotionPlusMode;
+        pkg.addr_length = sizeof(uint8_t);
+        pkg.chip = wmp_address;
+        pkg.buffer = (void*)(&cmd);
+        pkg.length = sizeof(cmd);
         if (use_nunchuk)
         {
             DEBUGPRINT("Nunchuk+WMP combined... ");
-            twi.write(kMotionPlusModeNunchukCombined); // Nunchuk and WMP combined mode
+            cmd = kMotionPlusModeNunchukCombined;
         }
         else
         {
             DEBUGPRINT("MotionPlus only... ");
-            twi.write(kMotionPlusModeMotionPlus); // MotionPlus only
+            cmd = kMotionPlusModeMotionPlus;
         }
-        twi.endTransmission(); // After this WMP has changed address to 0x52
+        fb->flush();
+        while (twi_master_write(twi, &pkg) != TWI_SUCCESS);
+        // After this WMP has changed address to 0x52
         DEBUGPRINTLN(" done.");
-        delay(WII_INIT_DELAY); // FIXME: Is delay neccessary?
+        fb->flush();
+        //~ delay(WII_INIT_DELAY); // FIXME: Is delay neccessary?
 
         DEBUGPRINT("Requesting extension identifier...");
-        twi.beginTransmission(extension_address);
-        twi.write(kAddressIdentification);
-        twi.endTransmission();
+        fb->flush();
+        pkg.addr[0] = kAddressIdentification;
+        pkg.addr_length = sizeof(uint8_t);
+        pkg.chip = extension_address;
+        uint64_t extension_id = 0;
+        pkg.buffer = (void*)(&extension_id);
+        pkg.length = 6; // Extension ids are 6 bytes long
+        // Perform a multi-byte read access then check the result.
+        while (twi_master_read(twi, &pkg) != TWI_SUCCESS);
         DEBUGPRINTLN(" done.");
-        delay(WII_INIT_DELAY); // FIXME: Is delay neccessary?
+        fb->flush();
+        //~ delay(WII_INIT_DELAY); // FIXME: Is delay neccessary?
 
         // Read extension ID
-        twi.requestFrom(extension_address, (uint8_t) 6);
+        //~ twi.requestFrom(extension_address, (uint8_t) 6);
         DEBUGPRINT("Extension ID: ");
-        for (uint8_t i = 0; i < 6; ++i)
-        {
-            buf[i] = twi.read();
-            DEBUGPRINTHEX(buf[i]);
-            DEBUGPRINT(" ");
-        }
-        DEBUGPRINTLN("");
+        fb->flush();
+        DEBUGPRINTLN((uint32_t)(extension_id>>16));
+        fb->flush();
+        //~ for (uint8_t i = 0; i < 6; ++i)
+        //~ {
+            //~ buf[i] = twi.read();
+            //~ DEBUGPRINTHEX(buf[i]);
+            //~ DEBUGPRINT(" ");
+        //~ }
+        //~ DEBUGPRINTLN("");
         /*
          * From http://wiibrew.org/wiki/Wiimote/Extension_Controllers#The_New_Way
          * Extension IDs: (not a complete list)
@@ -139,14 +163,21 @@ namespace IMU {
          * 0000 A420 0505   Activated Wii Motion Plus in Nunchuk passthrough mode
          * 0000 A420 0705   Activated Wii Motion Plus in Classic Controller passthrough mode
          */
-        DEBUGPRINTLN("done.");
+        //~ DEBUGPRINTLN("done.");
 
         DEBUGPRINT("Setting read address...");
-        twi.beginTransmission(extension_address);
-        twi.write(kAddressReport);
-        twi.endTransmission();
+        cmd = kAddressReport;
+        pkg.addr_length = 0;
+        pkg.chip = extension_address;
+        pkg.buffer = (void*)(&cmd);
+        pkg.length = sizeof(cmd);
+        while (twi_master_write(twi, &pkg) != TWI_SUCCESS);
+        //~ twi.beginTransmission(extension_address);
+        //~ twi.write(kAddressReport);
+        //~ twi.endTransmission();
         DEBUGPRINTLN(" done.");
         DEBUGPRINTLN("MotionPlus initialization complete.");
+        fb->flush();
     }
 
     bool WiiMotionPlus::hasGyro()
@@ -163,28 +194,44 @@ namespace IMU {
 
     void WiiMotionPlus::measure()
     {
-        DEBUGPRINTLN("------ BEGIN WiiMotionPlus::measure() ------");
+        //~ DEBUGPRINTLN("------ BEGIN WiiMotionPlus::measure() ------");
+
+        twi_package_t pkg;
+        uint8_t cmd;
+        cmd = kCommandRequestReport;
+        //~ pkg.addr[0] = kAddressReport;
+        //~ pkg.addr_length = sizeof(uint8_t);
+        pkg.addr_length = 0;
+        pkg.chip = extension_address;
+        pkg.buffer = (void*)(&cmd);
+        pkg.length = sizeof(cmd);
+        while (twi_master_write(twi, &pkg) != TWI_SUCCESS);
+        pkg.buffer = (void*)(&buf[0]);
+        pkg.length = sizeof(buf);
+        pkg.addr_length = 0;
+        // Perform a multi-byte read access then check the result.
+        while (twi_master_read(twi, &pkg) != TWI_SUCCESS);
 
         // Request report (tell WMP to read sensors)
-        twi.beginTransmission(extension_address);
-        twi.write(kCommandRequestReport);
-        twi.endTransmission();
+        //~ twi.beginTransmission(extension_address);
+        //~ twi.write(kCommandRequestReport);
+        //~ twi.endTransmission();
 
         // Read report
-        twi.requestFrom(extension_address, (uint8_t) 6);
-        DEBUGPRINT("Data: ");
-        for (int i=0;i<6;i++)
-        {
-            buf[i]=twi.read();
-            DEBUGPRINTHEX(buf[i]);
-            DEBUGPRINT(" ");
-        }
-        DEBUGPRINTLN("");
+        //~ twi.requestFrom(extension_address, (uint8_t) 6);
+        //~ DEBUGPRINT("Data: ");
+        //~ for (int i=0;i<6;i++)
+        //~ {
+            //~ buf[i]=twi.read();
+            //~ DEBUGPRINTHEX(buf[i]);
+            //~ DEBUGPRINT(" ");
+        //~ }
+        //~ DEBUGPRINTLN("");
 
         // Parse report
         parseSensorData();
 
-        DEBUGPRINTLN("------ END WiiMotionPlus::measure() ------");
+        //~ DEBUGPRINTLN("------ END WiiMotionPlus::measure() ------");
     }
 
     /// Parse data from Wii MotionPlus
@@ -201,7 +248,7 @@ namespace IMU {
         // currently 0x02 means WMP data, 0x00 means nunchuk data, see Wii.h
         if ((buf[kExtensionIDByte] & kExtensionIDBitmask) == kExtensionIDMotionPlus)
         {
-            DEBUGPRINTLN("Gyro data");
+            //~ DEBUGPRINTLN("Gyro data");
             // WMP data
             /// \bug doesn't handle the slow bit on gyro packets.
             /// \todo Right handed system
@@ -221,7 +268,7 @@ namespace IMU {
         else if ((buf[kExtensionConnectedByte] & kExtensionConnectedBitmask) &&
             ((buf[kExtensionIDByte] & kExtensionIDBitmask) == kExtensionIDNunchuk))
         {
-            DEBUGPRINTLN("Accelerometer data");
+            //~ DEBUGPRINTLN("Accelerometer data");
             // Nunchuk data
             /// \todo Right handed system
             // The signs and order of these axes are the same as on WiiBrew

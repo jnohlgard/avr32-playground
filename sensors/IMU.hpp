@@ -1,5 +1,5 @@
-#ifndef _SENSORS_IMU_H_
-#define _SENSORS_IMU_H_
+#ifndef _SENSORS_IMU_HPP_
+#define _SENSORS_IMU_HPP_
 /**
  * \file IMU.h
  * \author Copyright (C) 2012 Joakim Gebart <joakim.gebart@jge.se>
@@ -32,7 +32,7 @@
  *
  */
 
-#include <stdint.h>
+#include <cstdint>
 
 
 namespace IMU {
