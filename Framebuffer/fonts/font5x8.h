@@ -1,8 +1,8 @@
-#ifndef FRAMEBUFFER_FONTS_FONT6X8_H_
-#define FRAMEBUFFER_FONTS_FONT6X8_H_
+#ifndef FRAMEBUFFER_FONTS_FONT5X8_H_
+#define FRAMEBUFFER_FONTS_FONT5X8_H_
 namespace Fonts
 {
-static const unsigned char font6x8[] = {
+static const unsigned char font5x8[] = {
     8, // height
     6, // stride (bytes per char)
     0x20, // ascii index of first non-empty character in font
