@@ -1,4 +1,4 @@
-SET(ASF_PATH /home/kim/src/asf-3.2.0/)
+SET(ASF_PATH /home/kim/src/asf-3.2.1/)
 SET(ASF_PLATFORM avr32)
 SET(ASF_CPU uc3b0_b1)
 SET(CMAKE_SYSTEM_NAME Generic)
