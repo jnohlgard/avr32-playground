@@ -102,27 +102,3 @@ BaseOutStream& USARTStream::print(const char_type* str, size_type count)
     }
     return *this;
 }
-
-BaseOutStream& USARTStream::print(const char_type* str)
-{
-    size_type i = 0;
-    while (str[i] != '\0')
-    {
-        ++i;
-    }
-    print(str, i);
-}
-
-BaseOutStream& USARTStream::print(uint32_t num)
-{
-    char_type str[11];
-    format_ulong(&str[0], num, 10, sizeof(str));
-    print(str);
-}
-
-BaseOutStream& USARTStream::print(int32_t num)
-{
-    char_type str[11];
-    format_long(&str[0], num, 10, sizeof(str));
-    print(str);
-}

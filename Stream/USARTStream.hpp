@@ -33,9 +33,6 @@ class USARTStream : public BaseOutStream
         uint8_t getWidth(char_type ch);
 
         BaseOutStream& print(const char* str, size_type count); ///< Print null-terminated string
-        BaseOutStream& print(const char* str); ///< Print null-terminated string
-        BaseOutStream& print(uint32_t);
-        BaseOutStream& print(int32_t);
 };
 
 #endif // STREAM_USARTSTREAM_HPP_

@@ -13,6 +13,9 @@ class BaseOutStream
         virtual BaseOutStream& flush() = 0;
         virtual BaseOutStream& put(char_type ch) = 0;
         virtual BaseOutStream& write(const char_type* s, size_type count) = 0;
+        BaseOutStream& print(const char* str); ///< Print null-terminated string
+        BaseOutStream& print(uint32_t);
+        BaseOutStream& print(int32_t);
 };
 
 BaseOutStream& operator<<(BaseOutStream&, uint32_t);

@@ -2,21 +2,45 @@
 #include "formatting.hpp"
 #include <cstring>
 
-BaseOutStream& operator<<(BaseOutStream& self, uint32_t n)
+BaseOutStream& BaseOutStream::print(const char* str)
+{
+    size_type i = 0;
+    while (str[i] != '\0')
+    {
+        ++i;
+    }
+    write(str, i);
+    return *this;
+}
+
+BaseOutStream& BaseOutStream::print(uint32_t n)
 {
     BaseOutStream::char_type str[11];
     unsigned int len = format_ulong(&str[0], n, 10, sizeof(str));
-    self.write(str, len);
+    write(str, len);
 
+    return *this;
+}
+
+BaseOutStream& BaseOutStream::print(int32_t n)
+{
+    BaseOutStream::char_type str[11];
+    unsigned int len = format_long(&str[0], n, 10, sizeof(str));
+    write(str, len);
+
+    return *this;
+}
+
+
+BaseOutStream& operator<<(BaseOutStream& self, uint32_t n)
+{
+    self.print(n);
     return self;
 }
 
 BaseOutStream& operator<<(BaseOutStream& self, int32_t n)
 {
-    BaseOutStream::char_type str[11];
-    unsigned int len = format_long(&str[0], n, 10, sizeof(str));
-    self.write(str, len);
-
+    self.print(n);
     return self;
 }
 
@@ -44,14 +68,12 @@ BaseOutStream& operator<<(BaseOutStream& self, unsigned char ch)
 
 BaseOutStream& operator<<(BaseOutStream& self, const char* s)
 {
-    unsigned int len = strlen(s);
-    self.write(s, len);
+    self.print(s);
     return self;
 }
 
 BaseOutStream& operator<<(BaseOutStream& self, const unsigned char* s)
 {
-    unsigned int len = strlen((char*) s);
-    self.write((char*) s, len);
+    self.print((const char*) s);
     return self;
 }
