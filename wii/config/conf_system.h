@@ -41,7 +41,7 @@
 
 // Initialize TWI
 #define CONF_SYSTEM_TWI         (&AVR32_TWI)
-#define CONF_SYSTEM_TWI_SPEED   (50000)
+#define CONF_SYSTEM_TWI_SPEED   (400000)
 #define CONF_SYSTEM_TWI_ADDR    (0x53)
 
 #endif // CONF_SYSTEM_H_INCLUDED

@@ -22,14 +22,14 @@ void loop()
     wmp.measure(); // Accelerometer and gyro are updated in lockstep
     wmp.measure();
     gout << "A: " << wmp.getAccelerometerX() << ", " << wmp.getAccelerometerY() << ", " << wmp.getAccelerometerZ() << "\n";
-    fb->flush();
+    //~ fb->flush();
     gout << "W: " << wmp.getGyroX() << ", " << wmp.getGyroY() << ", " << wmp.getGyroZ() << "\n";
     fb->flush();
 
-    for(int u = 0; u < 1000000; ++u)
-    {
-        asm volatile ("nop\n");
-    }
+    //~ for(int u = 0; u < 1000000; ++u)
+    //~ {
+        //~ asm volatile ("nop\n");
+    //~ }
 }
 
 int main(int, char**)
