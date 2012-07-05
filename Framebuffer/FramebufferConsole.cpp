@@ -223,7 +223,7 @@ BaseOutStream& FramebufferConsole::write(const char_type* str, size_type count)
 /**
  * \note this does not respect \0 end of string bytes, for that functionality, use print()
  */
-void FramebufferConsole::textAt(const uint8_t x0, const uint8_t y0, size_t length, const unsigned char* str)
+FramebufferConsole& FramebufferConsole::textAt(const uint8_t x0, const uint8_t y0, size_t length, const unsigned char* str)
 {
     setPos(x0, y0);
     for (unsigned int i = 0; i < length; ++i)
@@ -239,5 +239,6 @@ void FramebufferConsole::textAt(const uint8_t x0, const uint8_t y0, size_t lengt
             col += monospace;
         }
     }
+    return *this;
 }
 

@@ -42,7 +42,7 @@ class FramebufferConsole : public BaseOutStream
         uint8_t getWidth(char_type ch);
 
         /// Text using a bitmap font
-        void textAt(const uint8_t x0, const uint8_t y0, size_t length, const unsigned char* str);
+        FramebufferConsole& textAt(const uint8_t x0, const uint8_t y0, size_t length, const unsigned char* str);
 };
 
 #endif // FRAMEBUFFER_FRAMEBUFFERCONSOLE_HPP_
