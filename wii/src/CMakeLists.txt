@@ -8,6 +8,7 @@ add_executable(${ELFFILE}
     ../../Framebuffer/Framebuffer.cpp
     ../../Framebuffer/FramebufferConsole.cpp
     ../../Framebuffer/SSD1306.cpp
+    ../../Framebuffer/Scope.cpp
     ../../Stream/formatting.cpp
     ../../Stream/BaseOutStream.cpp
     ../../Stream/USARTStream.cpp
