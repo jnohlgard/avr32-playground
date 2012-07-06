@@ -96,8 +96,33 @@ void initSystemTickTimer(void)
     waveform_opt.burst    = false;
     // Clock inversion.
     waveform_opt.clki     = false;
-    // Internal source clock 3, connected to fPBA / 8.
-    waveform_opt.tcclks   = TC_CLOCK_SOURCE_TC3;
+    unsigned int rc;
+    // some different clocks depending on what tick rate we're using.
+    // This is needed because the timer counter is only 16 bits wide and will overflow otherwise.
+    if (TICK_RATE_HZ > (sysclk_get_pba_hz() >> 16) / 2)
+    {
+        // Internal source clock 2, connected to fPBA / 2.
+        waveform_opt.tcclks   = TC_CLOCK_SOURCE_TC2;
+        rc = (sysclk_get_pba_hz() / 2 / TICK_RATE_HZ);
+    }
+    else if (TICK_RATE_HZ > (sysclk_get_pba_hz() >> 16) / 8)
+    {
+        // Internal source clock 3, connected to fPBA / 8.
+        waveform_opt.tcclks   = TC_CLOCK_SOURCE_TC3;
+        rc = (sysclk_get_pba_hz() / 8 / TICK_RATE_HZ);
+    }
+    else if (TICK_RATE_HZ > (sysclk_get_pba_hz() >> 16) / 32)
+    {
+        // Internal source clock 4, connected to fPBA / 32.
+        waveform_opt.tcclks   = TC_CLOCK_SOURCE_TC4;
+        rc = (sysclk_get_pba_hz() / 32 / TICK_RATE_HZ);
+    }
+    else
+    {
+        // Internal source clock 5, connected to fPBA / 128.
+        waveform_opt.tcclks   = TC_CLOCK_SOURCE_TC5;
+        rc = (sysclk_get_pba_hz() / 128 / TICK_RATE_HZ);
+    }
 
     // Options for enabling TC interrupts
     tc_interrupt_t tc_interrupt;
@@ -119,7 +144,7 @@ void initSystemTickTimer(void)
      * We want: (1 / (fPBA / 8)) * RC = 1 ms, hence RC = (fPBA / 8) / 1000
      * to get an interrupt every 10 ms.
      */
-    tc_write_rc(TICK_TC, TICK_TC_CHANNEL, (sysclk_get_pba_hz() / 8 / TICK_RATE_HZ));
+    tc_write_rc(TICK_TC, TICK_TC_CHANNEL, rc);
     // configure the timer interrupt
     tc_configure_interrupts(TICK_TC, TICK_TC_CHANNEL, &tc_interrupt);
     // Start the timer/counter.
