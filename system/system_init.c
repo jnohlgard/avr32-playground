@@ -7,7 +7,6 @@ extern "C" {
 #endif
 
 #include <services/clock/sysclk.h>
-#include <services/twi/twi_master.h>
 #include <drivers/intc/intc.h>
 #include "system/tick.h"
 #include "system/console.h"
@@ -26,6 +25,8 @@ void initInterrupts(void)
     cpu_irq_enable();
 }
 
+#ifdef CONF_SYSTEM_TWI
+#include <services/twi/twi_master.h>
 void initTWI(void)
 {
     static twi_master_options_t opt;
@@ -35,6 +36,7 @@ void initTWI(void)
     // Initialize the TWI master driver.
     twi_master_setup(CONF_SYSTEM_TWI, &opt);
 }
+#endif
 
 void system_init(void)
 {
