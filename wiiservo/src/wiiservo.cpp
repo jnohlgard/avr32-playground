@@ -26,7 +26,8 @@ bool backwards = true;
 void loop()
 {
     static Scope wiiplot(*fb, 0, 0, 128, 64);
-    fb->clear();
+    //~ fb->clear();
+    fb->clearRectangle(0, 0, 128, 8);
     wmp.measure(); // Accelerometer and gyro are updated in lockstep
     wmp.measure();
     wiiplot.put(wmp.getAccelerometerX() * wmp.getAccelerometerScaleX());

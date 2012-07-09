@@ -25,6 +25,11 @@ class Framebuffer
 
         virtual void clear(uint8_t filler = 0x0);
 
+        virtual void fillRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
+        virtual void clearRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
+        virtual void pset(uint8_t x, uint8_t y);
+        virtual void pclr(uint8_t x, uint8_t y);
+
         /// Bresenham's line drawing algorithm
         virtual void line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, bool color);
 

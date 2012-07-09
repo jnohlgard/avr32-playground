@@ -33,8 +33,8 @@ Scope& Scope::put(YValueType y)
     {
         fb_y = y0;
     }
-    // Ugly, blitting a 1x1 tile.
-    fb.blit(fb_x, fb_y, 1, 1, &fill[0]);
+    fb.clearRectangle(fb_x, y0, fb_x, y0 + height - 1);
+    fb.pset(fb_x, fb_y);
     ++current_x;
     if (current_x >= width)
     {

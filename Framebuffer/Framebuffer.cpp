@@ -27,6 +27,50 @@ void Framebuffer::clear(uint8_t filler)
     }
 }
 
+void Framebuffer::fillRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2)
+{
+    uint8_t mask = (0xff << (y1 % 8));
+    for (uint8_t y = (y1 / 8); y <= (y2 / 8); ++y)
+    {
+        if (y == (y2 / 8))
+        {
+            mask &= ~(0xfe << (y2 % 8));
+        }
+        for (uint8_t x = x1; x <= x2; ++x)
+        {
+            data[x + y * width] |= mask;
+        }
+        mask = 0xff;
+    }
+}
+
+void Framebuffer::clearRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2)
+{
+    uint8_t mask = ~(0xff << (y1 % 8));
+    for (uint8_t y = (y1 / 8); y <= (y2 / 8); ++y)
+    {
+        if (y == (y2 / 8))
+        {
+            mask |= (0xfe << (y2 % 8));
+        }
+        for (uint8_t x = x1; x <= x2; ++x)
+        {
+            data[x + y * width] &= mask;
+        }
+        mask = 0x00;
+    }
+}
+
+void Framebuffer::pset(uint8_t x, uint8_t y)
+{
+    data[x + (y / 8) * width] |= (1 << (y % 8));
+}
+
+void Framebuffer::pclr(uint8_t x, uint8_t y)
+{
+    data[x + (y / 8) * width] &= ~(1 << (y % 8));
+}
+
 /// Bresenham's line drawing algorithm
 void Framebuffer::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, bool color)
 {
